@@ -26,9 +26,8 @@ func (s *Server) Initialize() {
 	s.Router = chi.NewRouter()
 	setupMiddleware(s.Router)
 
-	s.Router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	// Creates application routes
+	s.initializeRoutes()
 
 	// Define http server
 	h := &http.Server{
@@ -60,7 +59,10 @@ func waitForShutdown(s *http.Server) {
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	s.Shutdown(ctx)
+
+	if err := s.Shutdown(ctx); err != nil {
+		log.Panic("Error shutting down")
+	}
 
 	log.Println("Shutting down")
 	os.Exit(0)
