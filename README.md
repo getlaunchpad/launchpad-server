@@ -15,3 +15,16 @@ $ docker build -t  docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad
 # Publish to Github Packages
 $ docker push docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad:latest
 ```
+
+##### Deploying kubernetes locally
+
+```shell
+# Started k8 process
+$ minikube start
+
+# Apply k8 config
+$ kubectl apply -f k8s-deployment.yml
+
+# Open node port
+$ minikube service launchpad-service
+```
