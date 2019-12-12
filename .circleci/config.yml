@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
-            docker login docker.pkg.github.com --username "$GITHUB_USERNAME" --password "$GITHUB_PASSWORD"
+            echo "$GITHUB_PASSWORD" | docker login docker.pkg.github.com -u "$GITHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:latest
 workflows:
   version: 2
