@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: launchpad
-          image: docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad:
+          image: docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad:$COMMIT_SHA1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
