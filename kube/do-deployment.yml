@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +14,7 @@ spec:
     spec:
       containers:
         - name: launchpad
-          image: docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad:$COMMIT_SHA1
+          image: docker.pkg.github.com/getlaunchpad/launchpad-server/launchpad:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

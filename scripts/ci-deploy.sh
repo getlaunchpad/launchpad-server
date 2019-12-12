@@ -13,11 +13,11 @@ export COMMIT_SHA1=$COMMIT_SHA1
 envsubst <./kube/do-deployment.yml >./kube/do-deployment.yml.out
 mv ./kube/do-deployment.yml.out ./kube/do-deployment.yml
 
-echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
+# echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
 
 ./kubectl \
   --kubeconfig=/dev/null \
   --server=$KUBERNETES_SERVER \
-  --certificate-authority=cert.crt \
   --token=$KUBERNETES_TOKEN \
   apply -f ./kube/
+#   --certificate-authority=cert.crt \
