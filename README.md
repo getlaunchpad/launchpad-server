@@ -1,5 +1,7 @@
 # Launchpad Server
 
+[![CircleCI](https://circleci.com/gh/getlaunchpad/launchpad-server.svg?style=svg)](https://circleci.com/gh/getlaunchpad/launchpad-server)
+
 > Server still in very early phases of development
 
 ### Helpful Commands
