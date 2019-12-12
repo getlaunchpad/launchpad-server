@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -24,22 +23,6 @@ type Server struct {
 // Initializes server for user
 // this includes composing routes, middleware and db
 func (s *Server) Initialize() {
-	/* Setup postgres */
-	var err error
-	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_USER"), os.Getenv("DB_NAME"), os.Getenv("DB_NAME"))
-	s.DB, err = gorm.Open(os.Getenv("DB_DRIVER"), DBURL)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	// Turn this off during production
-	s.DB.LogMode(true)
-
-	defer s.DB.Close()
-
-	// server.DB.AutoMigrate(&models.User{})
-
 	// Creates new chi mux and setup middlware
 	s.Router = chi.NewRouter()
 	setupMiddleware(s.Router)
