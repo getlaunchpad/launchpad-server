@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: launchpad-ingress
+spec:
+  rules:
+    - host: api.getlaunchpad.dev
+      http:
+        paths:
+          - backend:
+              serviceName: launchpad-service
+              servicePort: 80
