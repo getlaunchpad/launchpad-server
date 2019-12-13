@@ -15,6 +15,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
+// Defines server structure
 type Server struct {
 	DB     *gorm.DB
 	Router *chi.Mux
