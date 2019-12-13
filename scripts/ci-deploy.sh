@@ -10,8 +10,8 @@ export COMMIT_SHA1=$COMMIT_SHA1
 # since the only way for envsubst to work on files is using input/output redirection,
 #  it's not possible to do in-place substitution, so we need to save the output to another file
 #  and overwrite the original with that one.
-envsubst <./kube/do-deployment.yml >./kube/do-deployment.yml.out
-mv ./kube/do-deployment.yml.out ./kube/do-deployment.yml
+envsubst <./kube/launchpad-deployment.yml >./kube/launchpad-deployment.yml.out
+mv ./kube/launchpad-deployment.yml.out ./kube/launchpad-deployment.yml
 
 echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
 
