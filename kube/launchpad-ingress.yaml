@@ -2,7 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: launchpad-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging
 spec:
+  tls:
+    - hosts:
+        - api.getlaunchpad.dev
+      secretName: letsencrypt-staging
   rules:
     - host: api.getlaunchpad.dev
       http:
