@@ -1,13 +1,13 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
 	"github.com/lucasstettner/launchpad-server/app/features/status"
+	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 )
 
 func Routes() *chi.Mux {
@@ -21,8 +21,7 @@ func Routes() *chi.Mux {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Hello Launchpad!")
+		responses.Success(w, http.StatusOK, "Hello Launchpad!")
 	})
 
 	// Mount routes on endpoint /v1/...
