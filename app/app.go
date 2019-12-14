@@ -10,30 +10,23 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// Defines server structure
-type Server struct {
-	DB     *gorm.DB
-	Router *chi.Mux
-}
-
 // Initializes server for user
 // this includes composing routes, middleware and db
-func (s *Server) Initialize() {
-	// Creates new chi mux and setup middlware
-	s.Router = chi.NewRouter()
-	setupMiddleware(s.Router)
+func Start() {
+	// Creates new chi mux and setup middlware/routes
+	router := Routes()
 
-	// Creates application routes
-	s.initializeRoutes()
+	// Print out all routes
+	if err := chi.Walk(router, walkFunc); err != nil {
+		log.Panicf("Logging err: %s\n", err.Error())
+	}
 
 	// Define http server
 	h := &http.Server{
-		Handler:      s.Router,
+		Handler:      router,
 		Addr:         ":8080",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -70,13 +63,7 @@ func waitForShutdown(s *http.Server) {
 	os.Exit(0)
 }
 
-// Sets up various middlewares
-func setupMiddleware(r *chi.Mux) {
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Compress(6, "application/json"))
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.URLFormat)
-	r.Use(middleware.Timeout(60 * time.Second))
+func walkFunc(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
+	log.Printf("%s %s\n", method, route) // Walk and print out all routes
+	return nil
 }

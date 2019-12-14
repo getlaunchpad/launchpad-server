@@ -20,7 +20,7 @@ spec:
             - containerPort: 8080
           livenessProbe:
             httpGet:
-              path: /health
+              path: /v1/status/health
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 5
@@ -28,7 +28,7 @@ spec:
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
-              path: /readiness
+              path: /v1/status/readiness
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 5

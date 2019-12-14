@@ -7,8 +7,6 @@ import (
 	"github.com/lucasstettner/launchpad-server/app"
 )
 
-var server = app.Server{}
-
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println(err)
@@ -16,5 +14,5 @@ func main() {
 		log.Println("Fetching env variables")
 	}
 
-	server.Initialize()
+	app.Start()
 }
