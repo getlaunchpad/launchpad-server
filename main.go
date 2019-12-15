@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Println(err)
+		log.Panic(err)
 	} else {
 		log.Println("Fetching env variables")
 	}

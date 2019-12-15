@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
+	"github.com/lucasstettner/launchpad-server/app/features/auth"
 	"github.com/lucasstettner/launchpad-server/app/features/status"
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 )
@@ -27,6 +28,7 @@ func Routes() *chi.Mux {
 	// Mount routes on endpoint /v1/...
 	router.Route("/v1", func(r chi.Router) {
 		r.Mount("/status", status.Routes())
+		r.Mount("/auth/google", auth.Routes())
 	})
 
 	return router
