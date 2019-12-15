@@ -6,22 +6,30 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
-func Routes() *chi.Mux {
+type Config struct {
+	*config.Config
+}
+
+func New(c *config.Config) *Config {
+	return &Config{c}
+}
+
+func (c *Config) Routes() *chi.Mux {
 	router := chi.NewRouter()
-	router.Get("/login", oauthGoogleLogin)
-	router.Get("/callback", oauthGoogleCallback)
+	router.Get("/login", c.oauthGoogleLogin)
+	router.Get("/callback", c.oauthGoogleCallback)
 	return router
 }
 
-func oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
+func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	config := config.New()
 
 	// Create oauthState cookie
@@ -35,26 +43,23 @@ func oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }
 
-func oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
+func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Read oauthState from Cookie
 	oauthState, _ := r.Cookie("oauthstate")
 
 	if r.FormValue("state") != oauthState.Value {
-		log.Println("invalid oauth google state")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		responses.Error(w, http.StatusBadRequest, "Invalid oauth google state")
 		return
 	}
 
 	data, err := getUserDataFromGoogle(r.FormValue("code"))
 	if err != nil {
-		log.Println(err.Error())
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		responses.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// GetOrCreate User in your db.
-	// Redirect or response with a token.
-	// More code .....
+	// Print out user details
+	// This is temporary, later down the line we can do a LoginOrSignup
 	fmt.Fprintf(w, "UserInfo: %s\n", data)
 }
 

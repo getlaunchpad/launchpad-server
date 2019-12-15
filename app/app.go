@@ -11,13 +11,16 @@ import (
 
 	"github.com/go-chi/chi"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/lucasstettner/launchpad-server/config"
 )
 
 // Initializes server for user
 // this includes composing routes, middleware and db
 func Start() {
+	c := config.New()
+
 	// Creates new chi mux and setup middlware/routes
-	router := Routes()
+	router := Routes(c)
 
 	// Print out all routes
 	if err := chi.Walk(router, walkFunc); err != nil {

@@ -9,9 +9,10 @@ import (
 	"github.com/lucasstettner/launchpad-server/app/features/auth"
 	"github.com/lucasstettner/launchpad-server/app/features/status"
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
+	"github.com/lucasstettner/launchpad-server/config"
 )
 
-func Routes() *chi.Mux {
+func Routes(c *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON), // Set content-Type headers as application/json
@@ -28,7 +29,7 @@ func Routes() *chi.Mux {
 	// Mount routes on endpoint /v1/...
 	router.Route("/v1", func(r chi.Router) {
 		r.Mount("/status", status.Routes())
-		r.Mount("/auth/google", auth.Routes())
+		r.Mount("/auth/google", auth.New(c).Routes())
 	})
 
 	return router
