@@ -1,16 +1,18 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
+	"github.com/lucasstettner/launchpad-server/app/features/auth"
 	"github.com/lucasstettner/launchpad-server/app/features/status"
+	"github.com/lucasstettner/launchpad-server/app/utils/responses"
+	"github.com/lucasstettner/launchpad-server/config"
 )
 
-func Routes() *chi.Mux {
+func Routes(c *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON), // Set content-Type headers as application/json
@@ -21,13 +23,13 @@ func Routes() *chi.Mux {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "Hello Launchpad!")
+		responses.Success(w, http.StatusOK, "Hello Launchpad!")
 	})
 
 	// Mount routes on endpoint /v1/...
 	router.Route("/v1", func(r chi.Router) {
 		r.Mount("/status", status.Routes())
+		r.Mount("/auth/google", auth.New(c).Routes())
 	})
 
 	return router
