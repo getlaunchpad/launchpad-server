@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/lucasstettner/launchpad-server/app/models"
+
 	"github.com/jinzhu/gorm"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -28,7 +30,7 @@ type DBConfig struct {
 type Config struct {
 	Google   GoogleConfig
 	DBConfig DBConfig
-	Database *gorm.DB
+	DB       *gorm.DB
 }
 
 func New() *Config {
@@ -62,18 +64,16 @@ func New() *Config {
 		config.DBConfig.Name,
 		config.DBConfig.Password)
 
-	config.Database, err = gorm.Open(config.DBConfig.Dialect, DBURL)
+	config.DB, err = gorm.Open(config.DBConfig.Dialect, DBURL)
 	if err != nil {
 		log.Fatal(err)
 		return &Config{}
 	}
 
 	// turn this off in prod
-	config.Database.LogMode(true)
+	config.DB.LogMode(true)
 
-	defer config.Database.Close()
-
-	// db.AutoMigrate(&models.User{})
+	config.DB.AutoMigrate(&models.User{})
 
 	return config
 }

@@ -14,10 +14,11 @@ import (
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
-// Initializes server for user
-// this includes composing routes, middleware and db
 func Start() {
 	c := config.New()
+
+	// Close db connection right on the server closing
+	defer c.DB.Close()
 
 	// Creates new chi mux and setup middlware/routes
 	router := Routes(c)

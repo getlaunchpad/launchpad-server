@@ -4,10 +4,15 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/lucasstettner/launchpad-server/app/models"
+
+	"github.com/lucasstettner/launchpad-server/app/constants"
 
 	"github.com/go-chi/chi"
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
@@ -29,6 +34,12 @@ func (c *Config) Routes() *chi.Mux {
 	return router
 }
 
+type GoogleAuthResponse struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+}
+
+// Redirect user to google oauth flpw
 func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	config := config.New()
 
@@ -43,6 +54,7 @@ func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }
 
+// Callback from google flow
 func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Read oauthState from Cookie
 	oauthState, _ := r.Cookie("oauthstate")
@@ -58,9 +70,24 @@ func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	guser := GoogleAuthResponse{}
+	if err := json.Unmarshal(data, &guser); err != nil {
+		responses.Error(w, http.StatusBadRequest, constants.DecodeRequestBodyErr)
+		return
+	}
+
+	user := models.User{
+		Email:    guser.Email,
+		GoogleID: guser.ID,
+	}
+	if err := user.LoginOrSignup(c.DB); err != nil {
+		responses.Error(w, http.StatusBadRequest, "Error logging/signing up")
+		return
+	}
+
 	// Print out user details
 	// This is temporary, later down the line we can do a LoginOrSignup
-	fmt.Fprintf(w, "UserInfo: %s\n", data)
+	fmt.Fprintf(w, "UserInfo: %s\n", guser)
 }
 
 // Generates state cookie under oauthstate
