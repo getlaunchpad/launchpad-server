@@ -4,10 +4,20 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type Role string
+
+const (
+	// Has access to all features
+	// Unsure about what more role pro will have
+	Member Role = "member"
+	Pro    Role = "pro"
+)
+
 type User struct {
 	Model           // gorm.Model
 	Email    string `gorm:"unique;not null" json:"email"`
 	GoogleID string `gorm:"unique;not null" json:"google_id"`
+	Role     Role   `gorm:"type:role;default:'member';not null;" json:"role"`
 }
 
 // Used for oauth, either logs in user or signs them up
