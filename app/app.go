@@ -17,10 +17,10 @@ import (
 func Start() {
 	c := config.New()
 
-	// Close db connection right on the server closing
+	// Close db connection on server close
 	defer c.DB.Close()
 
-	// Creates new chi mux and setup middlware/routes
+	// Create new chi mux and setup middlware/routes
 	router := Routes(c)
 
 	// Print out all routes
@@ -67,6 +67,7 @@ func waitForShutdown(s *http.Server) {
 	os.Exit(0)
 }
 
+// Shows all routes on start
 func walkFunc(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
 	log.Printf("%s %s\n", method, route) // Walk and print out all routes
 	return nil

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/lucasstettner/launchpad-server/app/models"
+	"golang.org/x/oauth2"
 
 	"github.com/lucasstettner/launchpad-server/app/constants"
 
@@ -18,6 +19,8 @@ import (
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 	"github.com/lucasstettner/launchpad-server/config"
 )
+
+const userInfoURI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
 
 type Config struct {
 	*config.Config
@@ -41,8 +44,6 @@ type GoogleAuthResponse struct {
 
 // Redirect user to google oauth flpw
 func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	config := config.New()
-
 	// Create oauthState cookie
 	oauthState := generateStateOauthCookie(w)
 
@@ -50,7 +51,7 @@ func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	   AuthCodeURL receive state that is a token to protect the user from CSRF attacks. You must always provide a non-empty string and
 	   validate that it matches the the state query parameter on your redirect callback.
 	*/
-	u := config.Google.OauthConfig.AuthCodeURL(oauthState)
+	u := c.Constants.GConfig.AuthCodeURL(oauthState)
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }
 
@@ -64,7 +65,7 @@ func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := getUserDataFromGoogle(r.FormValue("code"))
+	data, err := getUserDataFromGoogle(r.FormValue("code"), c.Constants.GConfig)
 	if err != nil {
 		responses.Error(w, http.StatusBadRequest, err.Error())
 		return
@@ -103,15 +104,13 @@ func generateStateOauthCookie(w http.ResponseWriter) string {
 	return state
 }
 
-func getUserDataFromGoogle(code string) ([]byte, error) {
-	config := config.New()
-
+func getUserDataFromGoogle(code string, GConfig *oauth2.Config) ([]byte, error) {
 	// Use code to get token and get user info from Google.
-	token, err := config.Google.OauthConfig.Exchange(context.Background(), code)
+	token, err := GConfig.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
 	}
-	response, err := http.Get(config.Google.UserInfoUrl + token.AccessToken)
+	response, err := http.Get(userInfoURI + token.AccessToken)
 	if err != nil {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
