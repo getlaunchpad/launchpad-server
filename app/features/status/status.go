@@ -1,7 +1,10 @@
 package status
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
 
 	"github.com/go-chi/chi"
 )
@@ -14,6 +17,8 @@ func Routes() *chi.Mux {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
+	token := &jwt.Token{}
+	fmt.Println(token.New().Encode(1, "member"))
 	w.WriteHeader(http.StatusOK)
 }
 

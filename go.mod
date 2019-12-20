@@ -14,8 +14,8 @@ require (
 	github.com/go-openapi/spec v0.19.5 // indirect
 	github.com/jinzhu/gorm v1.9.11
 	github.com/joho/godotenv v1.3.0
-	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/spf13/viper v1.6.1
+	github.com/t0nyandre/go-rest-boilerplate v0.0.0-20191007210906-65f357fb20b2
 	github.com/urfave/cli v1.22.2 // indirect
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
