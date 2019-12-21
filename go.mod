@@ -14,12 +14,7 @@ require (
 	github.com/go-openapi/spec v0.19.5 // indirect
 	github.com/jinzhu/gorm v1.9.11
 	github.com/joho/godotenv v1.3.0
-<<<<<<< HEAD
-	github.com/mailru/easyjson v0.7.0 // indirect
-	github.com/pkg/errors v0.8.0
-=======
 	github.com/pkg/errors v0.8.1
->>>>>>> 78042386d4698e4143a37b81e64768336ee97a22
 	github.com/spf13/viper v1.6.1
 	github.com/t0nyandre/go-rest-boilerplate v0.0.0-20191007210906-65f357fb20b2
 	github.com/urfave/cli v1.22.2 // indirect
