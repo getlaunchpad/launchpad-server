@@ -13,7 +13,7 @@ import (
 // Therefore we use the testing.Main package
 func TestMain(m *testing.M) {
 	if err := godotenv.Load(os.ExpandEnv("./.env")); err != nil {
-		log.Fatalf("Error getting env %v\n", err)
+		log.Printf("Error getting env, continuing in production mode %v\n", err)
 	}
 
 	// Integration Test DB Connection and Viper configuration
