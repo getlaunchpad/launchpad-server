@@ -15,20 +15,9 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type DBConfig struct {
-	Dialect  string
-	Host     string
-	Port     string
-	Username string
-	Password string
-	Name     string
-	Charset  string
-}
-
 type Constants struct {
-	Version  string
-	DBConfig DBConfig
-	GConfig  *oauth2.Config
+	Version string
+	GConfig *oauth2.Config
 }
 
 type Config struct {
@@ -54,14 +43,15 @@ func New() *Config {
 		RedirectURL:  viper.GetString("GoogleRedirectUrl"),
 	}
 
-	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
-		config.Constants.DBConfig.Host,
-		config.Constants.DBConfig.Port,
-		config.Constants.DBConfig.Username,
-		config.Constants.DBConfig.Name,
-		config.Constants.DBConfig.Password)
+	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_SSLMODE"),
+		os.Getenv("DB_PASSWORD"))
 
-	config.DB, err = gorm.Open(config.Constants.DBConfig.Dialect, DBURL)
+	config.DB, err = gorm.Open("postgres", DBURL)
 	if err != nil {
 		log.Fatal(err)
 		return &Config{}
@@ -69,6 +59,9 @@ func New() *Config {
 
 	// turn this off in prod
 	config.DB.LogMode(true)
+
+	// Create necessary types (such as roles for user) before migration
+	// config.DB.Exec("CREATE TYPE role AS ENUM ('member','pro');")
 
 	config.DB.AutoMigrate(&models.User{})
 

@@ -1,6 +1,7 @@
 # Launchpad Server
 
 [![CircleCI](https://circleci.com/gh/getlaunchpad/server.svg?style=svg)](https://circleci.com/gh/getlaunchpad/server)
+[![codecov](https://codecov.io/gh/getlaunchpad/server/branch/master/graph/badge.svg)](https://codecov.io/gh/getlaunchpad/server)
 
 > Server still in very early phases of development
 
