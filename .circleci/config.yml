@@ -43,7 +43,7 @@ jobs:
           flags: backend,unittest
       - run:
           name: Deploy Code
-          command: ./scripts/ci-deploy.sh
+          command: ./ci-deploy.sh
 
 workflows:
   version: 2
