@@ -1,20 +1,13 @@
 package jwt
 
 import (
-<<<<<<< HEAD
-=======
-	"fmt"
->>>>>>> 78042386d4698e4143a37b81e64768336ee97a22
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-<<<<<<< HEAD
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 
-=======
->>>>>>> 78042386d4698e4143a37b81e64768336ee97a22
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 
