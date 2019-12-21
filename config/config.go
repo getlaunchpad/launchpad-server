@@ -43,15 +43,7 @@ func New() *Config {
 		RedirectURL:  viper.GetString("GoogleRedirectUrl"),
 	}
 
-	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s password=%s",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_SSLMODE"),
-		os.Getenv("DB_PASSWORD"))
-
-	config.DB, err = gorm.Open("postgres", DBURL)
+	config.DB, err = gorm.Open("postgres", os.Getenv("DB_URL"))
 	if err != nil {
 		log.Fatal(err)
 		return &Config{}
