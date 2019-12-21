@@ -1,21 +1,20 @@
 version: 2.1
 orbs:
   codecov: codecov/codecov@1.0.2
-  go: circleci/go@0.2.0
 jobs:
   build:
     docker:
+      - image: circleci/golang:1.13
       - image: circleci/buildpack-deps:stretch
+      - image: circleci/node:9.8.0-stretch-browsers
+
     environment:
       IMAGE_NAME: docker.pkg.github.com/getlaunchpad/server/launchpad
     working_directory: ~/app
     steps:
       - checkout
       - setup_remote_docker
-      - restore_cache: # restores saved cache if no changes are detected since last run
-          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          keys:
-            - v1-pkg-cache
+        docker_layer_caching: true 
       - run:
           name: Build Docker image
           command: |
@@ -45,10 +44,6 @@ jobs:
       - run:
           name: Deploy Code
           command: ./scripts/ci-deploy.sh
-      - save_cache: # Store cache in the /go/pkg directory
-          key: v1-pkg-cache
-          paths:
-            - "/go/pkg"
 
 workflows:
   version: 2
