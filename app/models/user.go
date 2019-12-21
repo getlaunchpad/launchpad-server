@@ -17,7 +17,7 @@ type User struct {
 	Model           // gorm.Model
 	Email    string `gorm:"unique;not null" json:"email"`
 	GoogleID string `gorm:"unique;not null" json:"google_id"`
-	Role     Role   `gorm:"type:role;default:member;not null;" json:"role;omitempty"`
+	Role     Role   `gorm:"type:role;default:'member';not null;" json:"role;omitempty"`
 }
 
 // Used for oauth, either logs in user or signs them up

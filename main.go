@@ -9,8 +9,7 @@ import (
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		// This currently breaks production, because env vars are handled in circleci
-		log.Panic(err)
+		log.Println(err)
 	} else {
 		log.Println("Fetching env variables")
 	}
