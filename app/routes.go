@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
+
 	"github.com/go-chi/cors"
 
 	"github.com/go-chi/chi"
@@ -17,6 +19,8 @@ import (
 
 func Routes(c *config.Config) *chi.Mux {
 	router := chi.NewRouter()
+	tokenHandler := jwt.Token{}.New()
+
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON), // Set content-Type headers as application/json
 		middleware.Logger,          // Log API request calls
@@ -24,6 +28,7 @@ func Routes(c *config.Config) *chi.Mux {
 		middleware.RedirectSlashes, // Redirect slashes to no slash URL versions
 		middleware.Recoverer,       // Recover from panics without crashing server
 		corsConfig().Handler,       // Sets up cors for use in production
+		tokenHandler.Verifier(),
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +39,17 @@ func Routes(c *config.Config) *chi.Mux {
 	router.Route(fmt.Sprintf("/%s", c.Constants.Version), func(r chi.Router) {
 		r.Mount("/status", status.Routes())
 		r.Mount("/auth/google", auth.New(c).Routes())
+
+		// Protected Routes
+		r.Group(func(r chi.Router) {
+			r.Use(tokenHandler.Authenticator)
+
+			r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
+				owner := tokenHandler.Decode(r)
+				fmt.Println(owner.UserID)
+				responses.Success(w, http.StatusOK, "success")
+			})
+		})
 	})
 
 	return router
