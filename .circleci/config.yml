@@ -44,7 +44,6 @@ jobs:
       - run:
           name: Deploy Code
           command: ./ci-deploy.sh
-
 workflows:
   version: 2
   build-master:
