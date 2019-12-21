@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
-	"github.com/lucasstettner/launchpad-server/config"
 )
 
 // This tests the main function of the app, it is necessary that this passes
@@ -15,9 +14,6 @@ func TestMain(m *testing.M) {
 	if err := godotenv.Load(os.ExpandEnv("./.env")); err != nil {
 		log.Printf("Error getting env, continuing in production mode %v\n", err)
 	}
-
-	// Integration Test DB Connection and Viper configuration
-	config.New()
 
 	os.Exit(m.Run())
 }
