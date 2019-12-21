@@ -36,7 +36,7 @@ func Routes(c *config.Config) *chi.Mux {
 	})
 
 	// Mount routes on endpoint /VERSION_NUMBER/...
-	router.Route(fmt.Sprintf("/%s", c.Constants.Version), func(r chi.Router) {
+	router.Route("/v1", func(r chi.Router) {
 		r.Mount("/status", status.Routes())
 		r.Mount("/auth/google", auth.New(c).Routes())
 
