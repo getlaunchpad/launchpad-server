@@ -41,6 +41,7 @@ func New() *Config {
 	constants, err := initViper()
 	config.Constants = constants
 	if err != nil {
+		log.Fatal(err)
 		return &Config{}
 	}
 
@@ -62,6 +63,7 @@ func New() *Config {
 
 	config.DB, err = gorm.Open(config.Constants.DBConfig.Dialect, DBURL)
 	if err != nil {
+		log.Fatal(err)
 		return &Config{}
 	}
 
