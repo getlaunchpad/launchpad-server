@@ -9,28 +9,36 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/go-chi/chi"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
-func Start() {
-	c := config.New()
+type App struct {
+	Router *chi.Mux
+	DB     *gorm.DB
+	Config *config.Config
+}
+
+func (a *App) Initialize() {
+	a.Config = config.New()
 
 	// Close db connection on server close
-	defer c.DB.Close()
+	defer a.Config.DB.Close()
 
 	// Create new chi mux and setup middlware/routes
-	router := Routes(c)
+	a.Router = Routes(a.Config)
 
 	// Print out all routes
-	if err := chi.Walk(router, walkFunc); err != nil {
+	if err := chi.Walk(a.Router, walkFunc); err != nil {
 		log.Panicf("Logging err: %s\n", err.Error())
 	}
 
 	// Define http server
 	h := &http.Server{
-		Handler:      router,
+		Handler:      a.Router,
 		Addr:         ":8080",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
