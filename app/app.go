@@ -9,8 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/go-chi/chi"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/lucasstettner/launchpad-server/config"
@@ -18,15 +16,11 @@ import (
 
 type App struct {
 	Router *chi.Mux
-	DB     *gorm.DB
 	Config *config.Config
 }
 
 func (a *App) Start(graceful bool) {
 	a.Config = config.New()
-
-	// Close db connection on server close
-	defer a.Config.DB.Close()
 
 	// Create new chi mux and setup middlware/routes
 	a.Router = Routes(a.Config)
@@ -47,6 +41,10 @@ func (a *App) Start(graceful bool) {
 	// Concurrently start http server process
 	go func() {
 		log.Println("Starting Server")
+
+		// Shut down db connection when concurrent go process is closed
+		defer a.Config.DB.Close()
+
 		if err := h.ListenAndServe(); err != nil {
 			log.Fatal(err)
 		}
@@ -55,7 +53,6 @@ func (a *App) Start(graceful bool) {
 	if graceful {
 		waitForShutdown(h)
 	}
-
 }
 
 // Gracefully shut down server

@@ -46,7 +46,7 @@ func New() *Config {
 	config.DB.LogMode(true)
 
 	// Create necessary types (such as roles for user) before migration
-	// config.DB.Exec("CREATE TYPE role AS ENUM ('member','pro');")
+	config.DB.Exec("CREATE TYPE role AS ENUM ('member','pro');")
 
 	config.DB.AutoMigrate(&models.User{})
 

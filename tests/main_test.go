@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/lucasstettner/launchpad-server/app"
+	"github.com/lucasstettner/launchpad-server/app/models"
 
 	"github.com/joho/godotenv"
 )
@@ -24,6 +25,16 @@ func TestMain(m *testing.M) {
 	a = app.App{}
 
 	a.Start(false)
+
+	if err := a.Config.DB.DB().Ping(); err != nil {
+		log.Fatalf("Error pinging conn: %s", err)
+		return
+	}
+
+	if !a.Config.DB.HasTable(&models.User{}) {
+		log.Fatal("User table does not exist")
+		return
+	}
 
 	os.Exit(m.Run())
 }
