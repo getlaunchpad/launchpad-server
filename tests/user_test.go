@@ -6,6 +6,7 @@ import (
 	"github.com/lucasstettner/launchpad-server/app/models"
 )
 
+// Test login or signup success
 func TestLoginOrSignupSuccess(t *testing.T) {
 	user := &models.User{
 		Email:    "test@gmail.com",
