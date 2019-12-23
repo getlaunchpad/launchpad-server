@@ -58,7 +58,11 @@ func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 // Callback from google flow
 func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Read oauthState from Cookie
-	oauthState, _ := r.Cookie("oauthstate")
+	oauthState, err := r.Cookie("oauthstate")
+	if err != nil || oauthState.Value == "" {
+		responses.Error(w, http.StatusBadRequest, "Invalid oauth google state")
+		return
+	}
 
 	if r.FormValue("state") != oauthState.Value {
 		responses.Error(w, http.StatusBadRequest, "Invalid oauth google state")
