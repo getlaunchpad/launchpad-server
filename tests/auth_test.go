@@ -1,4 +1,4 @@
-package auth_test
+package tests
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 
 func TestGoogleOauthLogin(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/v1/auth/google/login", nil)
-	// response := executeRequest(req)
+	response := executeRequest(req)
 
-	// testing.CheckResponseCode()
+	checkResponseCode(t, http.StatusTemporaryRedirect, response.Code)
 }

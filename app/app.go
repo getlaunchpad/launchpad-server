@@ -22,7 +22,7 @@ type App struct {
 	Config *config.Config
 }
 
-func (a *App) Initialize() {
+func (a *App) Start(graceful bool) {
 	a.Config = config.New()
 
 	// Close db connection on server close
@@ -52,7 +52,10 @@ func (a *App) Initialize() {
 		}
 	}()
 
-	waitForShutdown(h)
+	if graceful {
+		waitForShutdown(h)
+	}
+
 }
 
 // Gracefully shut down server
