@@ -37,7 +37,7 @@ jobs:
             chmod u+x ./kubectl
       - run:
           name: Unit Test
-          command: go test -race -coverprofile=coverage.txt -covermode=atomic ./tests
+          command: go test ./tests -v -coverpkg=./... -race -covermode=atomic -coverprofile=coverage.txt
       - codecov/upload:
           file: coverage.txt
           flags: backend,unittest
