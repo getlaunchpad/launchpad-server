@@ -69,9 +69,15 @@ func (t *Token) Authenticate(r *http.Request) (*Claims, error) {
 		return &Claims{}, errors.New("Invalid JWT")
 	}
 
+	claims, _ := t.ParseToken(token.Raw)
+
+	return claims, nil
+}
+
+func (t *Token) ParseToken(str string) (*Claims, error) {
 	claims := &Claims{}
 
-	tkn, err := jwt.ParseWithClaims(token.Raw, claims, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.ParseWithClaims(str, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("ACCESS_TOKEN_SECRET")), nil
 	})
 	if err != nil || tkn == nil {

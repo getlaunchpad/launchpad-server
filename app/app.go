@@ -27,7 +27,7 @@ func (a *App) Start(graceful bool) {
 
 	// Print out all routes
 	if err := chi.Walk(a.Router, walkFunc); err != nil {
-		log.Panicf("Logging err: %s\n", err.Error())
+		log.Panicf("Logging err: %v\n", err.Error())
 	}
 
 	// Define http server
