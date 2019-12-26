@@ -1,7 +1,12 @@
-# Launchpad Server
-
-[![CircleCI](https://circleci.com/gh/getlaunchpad/server.svg?style=svg)](https://circleci.com/gh/getlaunchpad/server)
-[![codecov](https://codecov.io/gh/getlaunchpad/server/branch/master/graph/badge.svg)](https://codecov.io/gh/getlaunchpad/server)
+<p align="center">
+  <h3 align="center">Launchpad</h3>
+  <p align="center">Backend API for the launchpad application</p>
+  <p align="center">
+    <a href="https://goreportcard.com/report/github.com/getlaunchpad/server"><img src="https://goreportcard.com/badge/github.com/getlaunchpad/server"></a>
+    <a href="https://circleci.com/gh/getlaunchpad/server"><img src="https://circleci.com/gh/getlaunchpad/server.svg?style=svg"></a>
+    <a href="https://codecov.io/gh/getlaunchpad/server"><img src="https://codecov.io/gh/getlaunchpad/server/branch/master/graph/badge.svg" /></a>
+  </p>
+</p>
 
 > Server still in very early phases of development
 

@@ -17,6 +17,7 @@ import (
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
+// Composes routes for app
 func Routes(c *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 	tokenHandler := jwt.Token{}.New()

@@ -10,15 +10,18 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
+	// We need pgsql for gorm
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
+// Defines the structure of whole app
 type App struct {
 	Router *chi.Mux
 	Config *config.Config
 }
 
+// Begins the server
 func (a *App) Start(graceful bool) {
 	a.Config = config.New()
 
@@ -60,7 +63,7 @@ func waitForShutdown(s *http.Server) {
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	// Block until we recieve signal
+	// Block until we receive signal
 	<-interruptChan
 
 	// Create a deadline to wait for.

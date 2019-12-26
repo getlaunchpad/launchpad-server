@@ -25,7 +25,7 @@ func (u *User) LoginOrSignup(db *gorm.DB) error {
 	err := db.Model(User{}).Where("google_id = ?", u.GoogleID).Take(&u).Error
 
 	// If the error is that the record is not found
-	// sign them up and procede
+	// sign them up and proceed
 	if gorm.IsRecordNotFoundError(err) {
 		if err := db.Create(&u).Error; err != nil {
 			return err

@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// Describes routes for the status features
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Get("/health", healthHandler)

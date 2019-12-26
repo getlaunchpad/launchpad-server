@@ -1,5 +1,6 @@
 package constants
 
+// Possible server errors
 const (
 	ServerIssue                  = "server error, please try again"
 	ResourceNotFound             = "resource not found"

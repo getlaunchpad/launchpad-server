@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-// Clone of gorm.Model but with json tags
+// Model is a clone of gorm.Model but with json tags
 type Model struct {
 	ID        uint       `gorm:"primary_key;column:id" json:"id"`
 	CreatedAt time.Time  `gorm:"column:created_at" json:"created_at"`
