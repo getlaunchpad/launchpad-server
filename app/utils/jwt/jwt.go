@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/lucasstettner/launchpad-server/app/models"
+
 	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 
 	"github.com/dgrijalva/jwt-go"
@@ -21,8 +23,8 @@ type Token struct {
 
 type Claims struct {
 	jwt.StandardClaims
-	UserID uint   `json:"user_id"`
-	Role   string `json:"role"`
+	UserID uint        `json:"user_id"`
+	Role   models.Role `json:"role"`
 }
 
 // Creates new jwt with valid jwtauth instance
@@ -34,7 +36,7 @@ func (Token) New() *Token {
 	return token
 }
 
-func (t *Token) Encode(UserID uint, Role string) string {
+func (t *Token) Encode(UserID uint, Role models.Role) string {
 	claims := &Claims{
 		UserID: UserID,
 		Role:   Role,

@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
+
 	"github.com/lucasstettner/launchpad-server/app/models"
 	"golang.org/x/oauth2"
 
@@ -90,6 +92,12 @@ func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create/Encode jwt token with user id and role
+	t := jwt.Token{}.New().Encode(user.ID, user.Role)
+
+	// Add 'token' cookie to request header response
+	setRefreshCookie(w, t)
+
 	// Print out user details
 	// This is temporary, later down the line we can do a LoginOrSignup
 	fmt.Fprintf(w, "UserInfo: %s\n", guser)
@@ -124,4 +132,13 @@ func getUserDataFromGoogle(code string, GConfig *oauth2.Config) ([]byte, error) 
 		return nil, fmt.Errorf("failed read response: %s", err.Error())
 	}
 	return contents, nil
+}
+
+func setRefreshCookie(w http.ResponseWriter, t string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   t,
+		Path:    "/",
+		Expires: time.Now().Add(5 * time.Minute),
+	})
 }
