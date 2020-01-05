@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
@@ -18,7 +19,6 @@ import (
 	"github.com/lucasstettner/launchpad-server/app/constants"
 
 	"github.com/go-chi/chi"
-	"github.com/lucasstettner/launchpad-server/app/utils/responses"
 	"github.com/lucasstettner/launchpad-server/config"
 )
 
@@ -39,7 +39,7 @@ func (c *Config) Routes() *chi.Mux {
 	return router
 }
 
-type GoogleAuthResponse struct {
+type googleAuthResponse struct {
 	ID    string `json:"id"`
 	Email string `json:"email"`
 }
@@ -57,29 +57,32 @@ func (c *Config) oauthGoogleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, u, http.StatusTemporaryRedirect)
 }
 
-// Callback from google flow
+/*
+	We redirect user back even if there is an error to avoid leaving
+	their browser on the api
+*/
 func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	// Read oauthState from Cookie
 	oauthState, err := r.Cookie("oauthstate")
 	if err != nil || oauthState.Value == "" {
-		responses.Error(w, http.StatusBadRequest, "Invalid oauth google state")
+		redirectToFrontend(w, r, "invalid oauth state")
 		return
 	}
 
 	if r.FormValue("state") != oauthState.Value {
-		responses.Error(w, http.StatusBadRequest, "Invalid oauth google state")
+		redirectToFrontend(w, r, "invalid oauth state")
 		return
 	}
 
 	data, err := getUserDataFromGoogle(r.FormValue("code"), c.Constants.GConfig)
 	if err != nil {
-		responses.Error(w, http.StatusBadRequest, err.Error())
+		redirectToFrontend(w, r, err.Error())
 		return
 	}
 
-	guser := GoogleAuthResponse{}
+	guser := googleAuthResponse{}
 	if err := json.Unmarshal(data, &guser); err != nil {
-		responses.Error(w, http.StatusBadRequest, constants.DecodeRequestBodyErr)
+		redirectToFrontend(w, r, constants.DecodeRequestBodyErr)
 		return
 	}
 
@@ -88,7 +91,7 @@ func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		GoogleID: guser.ID,
 	}
 	if err := user.LoginOrSignup(c.DB); err != nil {
-		responses.Error(w, http.StatusBadRequest, "Error logging/signing up")
+		redirectToFrontend(w, r, "error logging in")
 		return
 	}
 
@@ -96,11 +99,10 @@ func (c *Config) oauthGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	t := jwt.Token{}.New().Encode(user.ID, user.Role)
 
 	// Add 'token' cookie to request header response
-	setRefreshCookie(w, t)
+	setAuthCookie(w, t)
 
-	// Print out user details
-	// This is temporary, later down the line we can do a LoginOrSignup
-	fmt.Fprintf(w, "UserInfo: %s\n", guser)
+	// Redirect to frontend with auth header
+	http.Redirect(w, r, "http://localhost:3000/", http.StatusTemporaryRedirect)
 }
 
 // Generates state cookie under oauthstate
@@ -134,11 +136,15 @@ func getUserDataFromGoogle(code string, GConfig *oauth2.Config) ([]byte, error) 
 	return contents, nil
 }
 
-func setRefreshCookie(w http.ResponseWriter, t string) {
+func setAuthCookie(w http.ResponseWriter, t string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   t,
 		Path:    "/",
 		Expires: time.Now().Add(5 * time.Minute),
 	})
+}
+
+func redirectToFrontend(w http.ResponseWriter, r *http.Request, err string) {
+	http.Redirect(w, r, "http://localhost:3000/login?error="+url.QueryEscape(err), http.StatusTemporaryRedirect)
 }
