@@ -97,7 +97,7 @@ func (t *Token) Authenticator(next http.Handler) http.Handler {
 		_, err := t.Authenticate(r)
 
 		if err != nil {
-			responses.Error(w, http.StatusUnauthorized, "Unauthorized")
+			responses.NewResponse(w, http.StatusUnauthorized, errors.New("Unauthorized"), nil)
 			return
 		}
 

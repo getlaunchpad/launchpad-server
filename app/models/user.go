@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -32,6 +34,20 @@ func (u *User) LoginOrSignup(db *gorm.DB) error {
 		}
 	} else if err != nil {
 		// Handle other cases other then record not found
+		return err
+	}
+
+	return nil
+}
+
+// Finds a single user, returns error
+func (u *User) FindUserByID(db *gorm.DB, uid uint) error {
+	err := db.Model(User{}).Where("id = ?", uid).Take(&u).Error
+
+	// We want to identify if the user is not found for debugging purposes
+	if gorm.IsRecordNotFoundError(err) {
+		return errors.New("User Not Found")
+	} else if err != nil {
 		return err
 	}
 

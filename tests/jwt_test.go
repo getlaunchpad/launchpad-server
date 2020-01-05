@@ -1,30 +1,11 @@
 package tests
 
 import (
-	"net/http"
 	"testing"
 	"time"
 
 	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
 )
-
-func TestAdminUnauthorized(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/v1/admin", nil)
-	response := executeRequest(req)
-
-	checkResponseCode(t, http.StatusUnauthorized, response.Code)
-}
-
-func TestAdminAuthorized(t *testing.T) {
-	token := jwt.Token{}.New()
-	tokenstr := token.Encode(2, "member")
-
-	req, _ := http.NewRequest("GET", "/v1/admin", nil)
-	req.Header.Add("Authorization", "Bearer "+tokenstr)
-	response := executeRequest(req)
-
-	checkResponseCode(t, http.StatusOK, response.Code)
-}
 
 func TestJWTEncoding(t *testing.T) {
 	// Encode jwt string with claims

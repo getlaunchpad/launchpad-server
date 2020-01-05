@@ -1,8 +1,9 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/lucasstettner/launchpad-server/app/features/user"
 
 	"github.com/lucasstettner/launchpad-server/app/utils/jwt"
 
@@ -33,7 +34,7 @@ func Routes(c *config.Config) *chi.Mux {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		responses.Success(w, http.StatusOK, "Hello Launchpad!")
+		responses.NewResponse(w, http.StatusOK, nil, "Hello Launchpad!")
 	})
 
 	// Mount routes on endpoint /VERSION_NUMBER/...
@@ -45,11 +46,7 @@ func Routes(c *config.Config) *chi.Mux {
 		r.Group(func(r chi.Router) {
 			r.Use(tokenHandler.Authenticator)
 
-			r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
-				owner := tokenHandler.Decode(r)
-				fmt.Println(owner.UserID)
-				responses.Success(w, http.StatusOK, "success")
-			})
+			r.Mount("/user", user.New(c).Routes())
 		})
 	})
 

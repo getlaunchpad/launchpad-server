@@ -2,25 +2,38 @@ package responses
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
-func Success(w http.ResponseWriter, statusCode int, message string) {
-	response := map[string]interface{}{"success": true, "message": message}
-	w.WriteHeader(statusCode)
-	Respond(w, response)
+// Response is the standardized response the users will get from this API. Error, if any and response body
+type Response struct {
+	Error *Error      `json:"error,omitempty"`
+	Body  interface{} `json:"data,omitempty"`
 }
 
-func Error(w http.ResponseWriter, statusCode int, message string) {
-	response := map[string]interface{}{"success": false, "message": message}
-	w.WriteHeader(statusCode)
-	Respond(w, response)
+// Error structures how I want the errors to be shown
+type Error struct {
+	Message string `json:"message,omitempty"`
 }
 
-func Respond(w http.ResponseWriter, data map[string]interface{}) {
-	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		fmt.Fprintf(w, "Error encoding json: %s", err.Error())
+// CustomResponse will generate a custom message when the http request is successful but no
+// data is given. One example is the logout endpoint
+type CustomResponse struct {
+	Message string `json:"message"`
+}
+
+// NewResponse is standardizing the json response provided by this API
+func NewResponse(w http.ResponseWriter, statusCode int, err error, data interface{}) {
+	w.WriteHeader(statusCode)
+	res := Response{}
+	if err != nil {
+		errors := Error{
+			Message: err.Error(),
+		}
+		res.Error = &errors
 	}
+	if data != nil {
+		res.Body = &data
+	}
+	json.NewEncoder(w).Encode(&res)
 }
